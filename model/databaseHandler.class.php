@@ -1,5 +1,5 @@
 <?php
-require_once '../config.php';
+require_once 'config.php';
   class db {
     // To use our database
 
@@ -13,15 +13,21 @@ require_once '../config.php';
     // This is called prepared statements
 
     private $conn;
-    private $serverIP = $config['db-ip'];
-    private $port = $config['db-port'];
-    private $databaseName = 'multiversum';
-    private $username = $config['db-user'];
-    private $password = $config['db-password'];
+    private $serverIP;
+    private $port;
+    private $databaseName;
+    private $username;
+    private $password;
     // Properties for the database
 
     function __construct() {
       // Starts when the class is called
+      $this->serverIP = $config['db-ip'];
+      $this->port = $config['db-port'];
+      $this->databaseName = $config['db-name'];
+      $this->username = $config['db-user'];
+      $this->password = $config['db-password'];
+
       try {
         $conn = new PDO("mysql:host=$this->serverIP;port=$this->port;dbname=$this->databaseName", $this->username, $this->password);
         // set the PDO error mode to exception

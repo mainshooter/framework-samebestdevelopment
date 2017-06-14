@@ -20,5 +20,6 @@
   $config['mail-senderName'] = '';
   // Mail config
 
+  // return($config);
 
 ?>
