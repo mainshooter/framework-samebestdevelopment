@@ -4,7 +4,7 @@
 
     public function default() {
       include 'view/header.php';
-
+        include 'view/result.php';
       include 'view/footer.html';
     }
   }

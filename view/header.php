@@ -36,7 +36,7 @@
     <div class="header">
       <div class="row">
         <h1 class="col-2"><a href="<?php echo base_url ?>"><?php echo projectName ?></a></h1>
-        <img class="col-4" src="<?php echo base_url ?>/view/image/samebestdevelopment-logo.png">
+        <img class="col-4" src="<?php echo base_url ?>/view/image/logo.png">
       </div>
     </div>
     <div class="col-3 col-m-3 menu">

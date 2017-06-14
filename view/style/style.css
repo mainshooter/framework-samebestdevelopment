@@ -7,6 +7,7 @@ body, html {
   background-color: #c0392b;
   box-shadow: 0px 7px 4px #bdc3c7;
   padding: 0;
+  margin-bottom: 1em;
 }
 .header .row {
   padding: 0;
