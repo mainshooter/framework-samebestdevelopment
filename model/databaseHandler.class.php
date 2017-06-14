@@ -1,4 +1,5 @@
 <?php
+require_once '../config.php';
   class db {
     // To use our database
 
@@ -11,14 +12,12 @@
     // $db->readData($sql, $input);
     // This is called prepared statements
 
-
-
     private $conn;
-    private $serverIP = 'samebestserver.nl';
-    private $port = '100';
+    private $serverIP = $config['db-ip'];
+    private $port = $config['db-port'];
     private $databaseName = 'multiversum';
-    private $username = 'root';
-    private $password = '1234567890';
+    private $username = $config['db-user'];
+    private $password = $config['db-password'];
     // Properties for the database
 
     function __construct() {
