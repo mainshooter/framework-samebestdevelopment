@@ -28,6 +28,8 @@
 
         <link rel="stylesheet" href="<?php echo base_url ?>/view/style/grid.css" type="text/css">
         <link rel="stylesheet" href="<?php echo base_url ?>/view/style/style.css" type="text/css">
+
+        <script src="<?php echo base_url ?>/view/js/main.js"></script>
       </head>
     <body>
 
