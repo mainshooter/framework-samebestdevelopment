@@ -5,6 +5,7 @@
 
   global $config;
   define("base_url", $config['base_url']);
+  define('projectName', $config['projectName']);
 
   $Router = new Router();
 
