@@ -32,8 +32,10 @@
     <body>
 
     <div class="header">
-      <h1><a href="<?php echo base_url ?>"><?php echo projectName ?></a></h1>
-      <img style="width: 14em;" src="<?php echo base_url ?>/view/image/samebestdevelopment-logo.png">
+      <div class="row">
+        <h1 class="col-2"><a href="<?php echo base_url ?>"><?php echo projectName ?></a></h1>
+        <img class="col-4" src="<?php echo base_url ?>/view/image/samebestdevelopment-logo.png">
+      </div>
     </div>
     <div class="col-3 col-m-3 menu">
       <ul>

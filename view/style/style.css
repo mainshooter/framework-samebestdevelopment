@@ -6,14 +6,21 @@ body, html {
 .header {
   background-color: #c0392b;
   box-shadow: 0px 7px 4px #bdc3c7;
+  padding: 0;
+}
+.header .row {
+  padding: 0;
 }
 .header a {
   color: white;
   text-decoration: none;
 }
-.header h1 {
+.header h1 a {
   font-weight: lighter;
   font-size: 1.4em;
+  margin: auto 0;
+  display: block;
+  line-height: 3.8em;
 }
 .menu ul li {
   background-color: #f39c12;
