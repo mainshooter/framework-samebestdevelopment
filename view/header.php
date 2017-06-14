@@ -32,7 +32,7 @@
     <body>
 
     <div class="header">
-      <h1><a href="<?php echo base_url ?>">Project name</a></h1>
+      <h1><a href="<?php echo base_url ?>"><?php echo projectName ?></a></h1>
       <img style="width: 14em;" src="<?php echo base_url ?>/view/image/samebestdevelopment-logo.png">
     </div>
     <div class="col-3 col-m-3 menu">
