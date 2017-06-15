@@ -1,5 +1,9 @@
 <?php
-  $config['projectName'] = 'Project naam';
+  $config;
+
+  $config['project-name'] = 'Project naam';
+  $config['project-author'] = 'Peter Romijn';
+  $config['project-company'] = 'SameBestDevelopment';
 
   $config['base_url'] = '/framework/';
   $config['router-debug'] = 'true';
@@ -20,6 +24,6 @@
   $config['mail-senderName'] = '';
   // Mail config
 
-  // return($config);
+  $GLOBALS['config'] = $config;
 
 ?>

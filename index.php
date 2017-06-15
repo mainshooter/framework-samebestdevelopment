@@ -4,8 +4,10 @@
   require_once 'config.php';
 
   global $config;
+  $config = $config;
+
   define("base_url", $config['base_url']);
-  define('projectName', $config['projectName']);
+  define('projectName', $config['project-name']);
 
   $Router = new Router();
 

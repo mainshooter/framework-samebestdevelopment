@@ -6,7 +6,7 @@
       include 'view/header.php';
         include 'view/result.php';
         include 'view/sidebar.html';
-      include 'view/footer.html';
+      include 'view/footer.php';
     }
   }
 
