@@ -29,7 +29,7 @@
         <link rel="stylesheet" href="<?php echo $GLOBALS['config']['base_url']; ?>/view/style/grid.css" type="text/css">
         <link rel="stylesheet" href="<?php echo $GLOBALS['config']['base_url']; ?>/view/style/style.css" type="text/css">
 
-        <script src="<?php echo base_url ?>/view/js/main.js"></script>
+        <script src="<?php echo $GLOBALS['config']['base_url']; ?>/view/js/main.js"></script>
       </head>
     <body>
 
@@ -37,7 +37,7 @@
         <img src="<?php echo $GLOBALS['config']['base_url'] ?>/view/image/logo.png">
         <h1><a href="<?php echo $GLOBALS['config']['base_url'] ?>"><?php echo $GLOBALS['config']['project-name'] ?></a></h1>
     </div>
-    <div class="col-3 col-m-3 menu">
+    <div class="col-3 col-m-12 menu">
       <ul>
         <li><a href="<?php echo $GLOBALS['config']['base_url'] ?>">Home</a></li>
         <li><a href="<?php echo $GLOBALS['config']['base_url'] ?>">The City</a></li>
