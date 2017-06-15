@@ -104,6 +104,7 @@ form select {
   font-size: 1.3em;
   background-color: #ecf0f1;
   color: black;
+  margin: 0.6em 0;
 }
 form select:focus {
   outline: none;
