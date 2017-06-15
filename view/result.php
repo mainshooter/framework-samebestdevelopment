@@ -27,6 +27,15 @@
 
       <form>
         <input type='text' name='test' placeholder='Hier kan je wat typen'>
+        <div></div>
+        <select>
+          <option>Hoi</option>
+          <option>Doei</option>
+        </select>
+        <div></div>
+          <input type='radio' name='gender' value='Man'>Man<br>
+          <input type='radio' name='gender' value='Women'>Women<br>
+        <div></div>
         <input type='submit'>
       </form>
 

@@ -95,9 +95,21 @@ form input[type=submit] {
   font-size: 1.1em;
   margin: 0.2em;
 }
-form input:focus {
+form input[type=text]:focus, form input[type=number]:focus {
 outline: 3px solid black;
 transition: 0.4s;
+}
+
+form select {
+  font-size: 1.3em;
+  background-color: #ecf0f1;
+  color: black;
+}
+form select:focus {
+  outline: none;
+}
+form input[type=radio] {
+
 }
 
 .footer h1 {
