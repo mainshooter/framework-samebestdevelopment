@@ -1,5 +1,4 @@
 <?php
-  require_once 'controller/display.Controller.php';
   class Router {
 
     var $siteLocation;
@@ -40,6 +39,8 @@
 
 
       $this->controller = $this->getController($this->path) . 'Controller';
+      require_once 'controller/' . $this->controller . ".php";
+
       $this->method = $this->getMethod($this->path);
       $this->parameters = $this->getParamters($this->path);
 
