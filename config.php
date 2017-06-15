@@ -6,7 +6,7 @@
   $config['project-company'] = 'SameBestDevelopment';
 
   $config['base_url'] = '/framework/';
-  $config['router-debug'] = 'true';
+  $config['router-debug'] = true;
 
   $config['db-ip'] = '';
   $config['db-port'] = 3306;
