@@ -1,5 +1,6 @@
 <?php
   require_once 'model/DatabaseHandler.class.php';
+  
   class displayController {
 
     public function default() {
