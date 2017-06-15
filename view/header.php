@@ -39,10 +39,10 @@
     </div>
     <div class="col-3 col-m-3 menu">
       <ul>
-        <li><a href="">The Flight</a></li>
-        <li>The City</li>
-        <li>The Island</li>
-        <li>The Food</li>
+        <li><a href="<?php echo $GLOBALS['config']['base_url'] ?>">Home</a></li>
+        <li><a href="<?php echo $GLOBALS['config']['base_url'] ?>">The City</a></li>
+        <li><a href="<?php echo $GLOBALS['config']['base_url'] ?>">The Island</a></li>
+        <li><a href="<?php echo $GLOBALS['config']['base_url'] ?>">The Food</a></li>
       </ul>
     </div>
     <div class="row">
