@@ -34,7 +34,8 @@
     <body>
 
     <div class="header">
-        <h1><a href="<?php echo base_url ?>"><?php echo $GLOBALS['config']['project-name'] ?></a></h1>
+        <img src="<?php echo $GLOBALS['config']['base_url'] ?>/view/image/logo.png">
+        <h1><a href="<?php echo $GLOBALS['config']['base_url'] ?>"><?php echo $GLOBALS['config']['project-name'] ?></a></h1>
     </div>
     <div class="col-3 col-m-3 menu">
       <ul>
