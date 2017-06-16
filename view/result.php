@@ -39,6 +39,8 @@
         <input type='submit' value='Our default submit button'>
       </form>
 
+      <a href=''>Our default link is here!</a>
+
     </div>
     ";
 ?>
