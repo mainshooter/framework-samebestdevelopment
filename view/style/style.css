@@ -28,6 +28,16 @@ body, html {
   margin: 0 auto;
   display: block;
 }
+#loader {
+  width: 4em;
+  height: 4em;
+  background: white;
+  border-radius: 50%;
+  float: right;
+  position: relative;
+  top: -4em;
+}
+
 .menu ul li {
   background-color: #f39c12;
   font-size: 1.3em;

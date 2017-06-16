@@ -36,6 +36,7 @@
     <div class="header">
         <img src="<?php echo $GLOBALS['config']['base_url'] ?>/view/image/logo.png">
         <h1><a href="<?php echo $GLOBALS['config']['base_url'] ?>"><?php echo $GLOBALS['config']['project-name'] ?></a></h1>
+        <div id="loader"></div>
     </div>
     <div class="col-3 col-m-12 menu">
       <ul>

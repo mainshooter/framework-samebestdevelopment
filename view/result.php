@@ -3,7 +3,7 @@
     <div class='col-6 col-m-12'>
       <h2>Here you can add your result.</h2>
 
-      <p>We have a lot of default styling</p>
+      <p>We have a lot of default styling. So you don't have to do it at your own!</p>
 
       <button type='button'>Default button</button>
 
@@ -25,7 +25,7 @@
         </tr>
       </table>
 
-      <form>
+      <form method='post'>
         <label>Here we have our label</label>
         <input type='text' name='test' placeholder='Hier kan je wat typen'>
         <div></div>
