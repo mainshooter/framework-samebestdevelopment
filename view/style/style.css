@@ -85,6 +85,16 @@ form input[type=text] {
   border: 1px solid #2c3e50;
   font-weight: lighter;
 }
+form input[type=mail] {
+  font-size: 1.3em;
+  border: 1px solid #2c3e50;
+  font-weight: lighter;
+}
+form input[type=number] {
+  font-size: 1.3em;
+  border: 1px solid #2c3e50;
+  font-weight: lighter;
+}
 form input[type=submit] {
   width: 10em;
   height: 3em;
