@@ -17,6 +17,7 @@ require_once 'security.class.php';
     * @param  [string] $userInputMail     [The mail adress that the user filled in]
     * @param  [string] $userInputPassword [The password the user filled in]
     * @param [string] $redirectLocation The location that we need the user to redirect to
+    * @param [boolean] [If the login is not succesed we send a false]
     */
    public function userLogin($userInputMail, $userInputPassword, $redirectLocation) {
      if ($this->checkIfEmailExists($userInputMail)) {
@@ -30,12 +31,12 @@ require_once 'security.class.php';
          header("Refresh:0; " . $redirectLocation);
        }
        else {
-          return("Wrong password");
+          return(false);
        }
      }
 
      else {
-       return("Don't know that user");
+       return(false);
      }
    }
 
