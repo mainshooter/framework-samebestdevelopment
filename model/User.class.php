@@ -1,6 +1,6 @@
 <?php
 require_once 'Databasehandler.class.php';
-require_once 'security.class.php';
+require_once 'Security.class.php';
 
  class User {
    private $mail;
