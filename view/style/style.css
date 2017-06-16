@@ -12,6 +12,9 @@ body, html {
   color: white;
   text-decoration: none;
 }
+.header a:hover {
+  color: white;
+}
 .header h1 a {
   font-weight: lighter;
   font-size: 1.4em;
@@ -81,6 +84,9 @@ button {
   font-size: 1.1em;
   margin: 0.6em 0;
 }
+button:focus {
+  outline: none;
+}
 form input[type=text] {
   font-size: 1.3em;
   border: 1px solid #2c3e50;
@@ -106,6 +112,10 @@ form input[type=submit] {
   margin: 0.6em 0;
   margin-bottom: 1.3em;
 }
+form input[type=submit] {
+  outline: none;
+}
+
 form input[type=text]:focus, form input[type=number]:focus {
 outline: 3px solid black;
 transition: 0.4s;
@@ -124,6 +134,7 @@ form label {
   display: block;
   font-size: 1.3em;
   margin-top: 1em;
+  margin-bottom: 0.1em;
 }
 a {
   color: black;
