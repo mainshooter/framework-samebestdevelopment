@@ -36,7 +36,7 @@
         <div></div>
 
         <div></div>
-        <input type='submit'>
+        <input type='submit' value='Our default submit button'>
       </form>
 
     </div>
