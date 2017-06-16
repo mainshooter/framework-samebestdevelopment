@@ -56,7 +56,7 @@ require_once 'security.class.php';
     * If the mail adress isn't in our db
     * @param  [string] $newEmail    [The mail adress from the user]
     * @param  [string] $newPassword [The password that the user wants]
-    * @return [string]              [A message if a user has been registerd]
+    * @return [boolean]              [If we succesed or not with registering a new user]
     */
    public function registerNewUser($newEmail, $newPassword) {
      $db = new db();
@@ -65,7 +65,7 @@ require_once 'security.class.php';
      $password = $this->generateHashPassword($s->checkInput($newPassword));
 
      if (!$this->checkIfEmailExists($newEmail)) {
-       $sql = "INSERT INTO `user`(`email`, `wachtwoord`) VALUES (:mail, :password)";
+       $sql = "INSERT INTO `user`(`mail`, `password`) VALUES (:mail, :password)";
        $input = array(
          "mail" => $s->checkInput($newEmail),
          "password" => $s->checkInput($password)
@@ -73,10 +73,10 @@ require_once 'security.class.php';
 
        $db->createData($sql, $input);
 
-       return('succes');
+       return(true);
      }
      else {
-       return('Email exists');
+       return(false);
      }
    }
 
@@ -149,14 +149,14 @@ require_once 'security.class.php';
      $Db = new db();
      $S = new Security();
 
-     $sql = "SELECT `groep` FROM user WHERE `email`=:mail";
+     $sql = "SELECT `group` FROM user WHERE `mail`=:mail";
      $input = array(
        "mail" => $S->checkInput($mail)
      );
      $result = $Db->readData($sql, $input);
 
      foreach ($result as $key) {
-       $_SESSION['userGroup'] = $key['groep'];
+       $_SESSION['userGroup'] = $key['group'];
      }
    }
 
@@ -176,7 +176,7 @@ require_once 'security.class.php';
      $db = new db();
      $s = new Security();
 
-     $sql = "SELECT `email` FROM user WHERE `email`=:mail";
+     $sql = "SELECT `mail` FROM user WHERE `mail`=:mail";
      $input = array(
        "mail" => $s->checkInput($userMailInput)
      );
@@ -219,14 +219,14 @@ require_once 'security.class.php';
      $db = new db();
      $s = new Security();
 
-     $sql = "SELECT wachtwoord FROM user WHERE `email`=:mail";
+     $sql = "SELECT password FROM user WHERE `mail`=:mail";
      $input = array(
        "mail" => $s->checkInput($userMail)
      );
      $result = $db->readData($sql, $input);
 
      foreach ($result as $key) {
-       return($key['wachtwoord']);
+       return($key['password']);
      }
    }
 
