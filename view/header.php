@@ -27,7 +27,7 @@
         <link rel="icon" type="image/png" href="<?php echo $GLOBALS['config']['base_url']; ?>view/icon/favicon-128.png" sizes="128x128" />
 
         <link rel="stylesheet" href="<?php echo $GLOBALS['config']['base_url']; ?>/view/style/grid.css" type="text/css">
-        <link rel="stylesheet" href="<?php echo $GLOBALS['config']['base_url']; ?>/view/style/style.css" type="text/css">
+        <link rel="stylesheet" href="<?php echo $GLOBALS['config']['base_url']; ?>/view/style/framework-style.css" type="text/css">
 
         <script src="<?php echo $GLOBALS['config']['base_url']; ?>/view/js/main.js"></script>
       </head>
