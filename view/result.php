@@ -35,7 +35,7 @@
         </select>
 
         <label>Text field</label>
-        <textarea></textarea>
+        <textarea placeholder='Here we have our textarea'></textarea>
 
         <div></div>
 
