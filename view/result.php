@@ -33,10 +33,16 @@
           <option>Hoi</option>
           <option>Doei</option>
         </select>
+
+        <label>Text field</label>
+        <textarea></textarea>
+
         <div></div>
 
         <div></div>
         <input type='submit' value='Our default submit button'>
+
+
       </form>
 
       <a href=''>Our default link is here!</a>

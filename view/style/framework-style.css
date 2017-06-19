@@ -114,6 +114,14 @@ form input[type=number] {
   border: 1px solid #2c3e50;
   font-weight: lighter;
 }
+form textarea {
+  font-size: 1.3em;
+  border: 1px solid #2c3e50;
+  font-weight: lighter;
+  width: 23em;
+  height: 14em;
+  resize: none;
+}
 form input[type=submit] {
   height: 3em;
   background-color: #bdc3c7;
