@@ -59,6 +59,9 @@ body, html {
 .aside p {
   font-size: 1.2em;
 }
+p {
+  font-weight: lighter;
+}
 h2 {
   font-size: 1.8em;
   font-weight: bold;
