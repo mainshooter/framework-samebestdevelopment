@@ -4,7 +4,7 @@
       <h2>Here you can add your result.</h2>
 
       <p>We have a lot of default styling. So you don't have to do it at your own!</p>
-
+      <div>Here is something that we have</div>
       <button type='button'>Default button</button>
 
       <table>
@@ -27,7 +27,7 @@
 
       <form method='post'>
         <label>Here we have our label</label>
-        <input type='text' name='test' placeholder='Hier kan je wat typen'>
+        <input type='text' name='test' placeholder='Here you can type'>
         <div></div>
         <select>
           <option>Hoi</option>
