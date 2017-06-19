@@ -122,6 +122,10 @@ form textarea {
   height: 14em;
   resize: none;
 }
+form textarea:focus {
+  outline: none;
+}
+
 form input[type=submit] {
   height: 3em;
   background-color: #bdc3c7;
