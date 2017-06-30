@@ -5,8 +5,13 @@
   $Router = new Router();
 
   $Router->installedPath = $GLOBALS['config']['base_url'];
-  $Router->standardController = 'display';
 
+  $Router->standardController = 'display';
+  $Router->customURLs = array(
+    "login" => "/user/login/",
+    "logout" => "/user/logout/"
+  );
+  $Router->customUrl();
   $Router->parseUrl();
 
   $Router->getController();
@@ -14,6 +19,9 @@
   $Router->getParameters();
 
   $Router->parseRouter();
+
+  $Router->routerDebug();
+
 
   if ($GLOBALS['config']['router-debug'] == true) {
     $Router->routerDebug();

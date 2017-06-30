@@ -9,6 +9,12 @@
     // $translateControllerNames[name of the translation] = the name of the real controller
     // Contains the new value for a controller name
 
+    public $customURLs;
+    // Contains a customer url
+    // When someone does /login/
+    // It will replace that with the correct controller and method
+    // So that will be /user/login/
+
     private $url;
     private $path;
     private $controller;
@@ -17,6 +23,32 @@
 
     public function __construct() {
       $this->url = $this->getUrl();
+    }
+
+    /**
+     * Transform the url to a customer url
+     * So when someone goes the /login/
+     * We go to our custom url we defined for it
+     * We define the url as property in the $customerURLs as a array
+     * array(
+     *  "login" => "user/logout";
+     * );
+     */
+    public function customUrl() {
+      $url = str_replace($this->installedPath, '', $this->url);
+      // To get our current URL
+
+      $url = str_replace('/', '', $this->url);
+      // To remove any / after the word
+      if (!empty($this->customURLs)) {
+        // If we have any customer urls
+        foreach ($this->customURLs as $key => $value) {
+          if ($key == $url) {
+            $this->url = $value;
+            break;
+          }
+        }
+      }
     }
 
     /**
@@ -131,6 +163,11 @@
         echo "Parameters: ";
         echo "<pre>";
         var_dump($this->parameters);
+        echo "</pre>";
+        echo "</br>";
+        echo "Custom URLs";
+        echo "<pre>";
+          var_dump($this->customURLs);
         echo "</pre>";
       echo "</div>";
     }
