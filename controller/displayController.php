@@ -6,7 +6,7 @@
     /**
      * The default method of the controller that present the default view
      */
-    public function default() {
+    public function index() {
       include 'view/header.php';
         include 'view/result.php';
         include 'view/sidebar.html';
