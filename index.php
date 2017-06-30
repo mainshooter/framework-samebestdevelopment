@@ -20,9 +20,6 @@
 
   $Router->parseRouter();
 
-  $Router->routerDebug();
-
-
   if ($GLOBALS['config']['router-debug'] == true) {
     $Router->routerDebug();
   }
