@@ -1,17 +1,23 @@
 <?php
-
-  require_once 'model/Router.class.php';
   require_once 'config.php';
+  require_once 'model/Router.class.php';
 
   $Router = new Router();
 
-  $Router->defaultController = 'display';
-  $Router->defaultMethod = 'default';
-  $Router->siteLocation = $GLOBALS['config']['base_url'];
+  $Router->installedPath = $GLOBALS['config']['base_url'];
+  $Router->standardController = 'display';
 
-  $Router->procesTheURL();
+  $Router->parseUrl();
+
+  $Router->getController();
+  $Router->getMethod();
+  $Router->getParameters();
+
+  $Router->parseRouter();
 
   if ($GLOBALS['config']['router-debug'] == true) {
-    $Router->debug();
+    $Router->routerDebug();
   }
+
+
 ?>
