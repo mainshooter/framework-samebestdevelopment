@@ -12,7 +12,7 @@ ini_set("display_errors", 1);
 
   $Router->installedPath = $GLOBALS['config']['base_url'];
 
-  $Router->standardController = 'user';
+  $Router->standardController = 'display';
   $Router->customURLs = array(
     "login" => "user/loginForm/",
     "logout" => "user/logout/"
