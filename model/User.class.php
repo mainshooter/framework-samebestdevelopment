@@ -1,5 +1,5 @@
 <?php
-require_once 'Databasehandler.class.php';
+require_once 'databaseHandler.class.php';
 require_once 'Security.class.php';
 
  class User {
@@ -41,7 +41,55 @@ require_once 'Security.class.php';
    }
 
    /**
+    * Gets the userID from a user by mail
+    * @param  [string] $userMail [The mail adress of a user]
+    * @return [int]           [The userID of the user]
+    */
+   public function getUserID($userMail) {
+     $Db = new db();
+     $S = new Security();
+
+       $sql = "SELECT iduser FROM user WHERE `mail`=:mail LIMIT 1";
+       $input = array(
+         "mail" => $S->checkInput($userMail)
+       );
+       $result = $Db->readData($sql, $input);
+       foreach ($result as $key) {
+         return($key['iduser']);
+         break;
+       }
+   }
+
+   /**
+    * Gets the mail from a user by the userID
+    * @param  [int] $userID [The ID of the user]
+    * @return [string]         [The mail adress from the user or a error message that nothing has been found]
+    */
+   public function getUserMail($userID) {
+     $Db = new db();
+     $S = new Security();
+
+     $sql = "SELECT `mail` FROM user WHERE iduser=:userID LIMIT 1";
+     $input = array(
+       "userID" => $S->checkInput($userID)
+     );
+     $result = $Db->readData($userID);
+
+     if (!empty($result)) {
+       foreach ($result as $key) {
+         return($key['mail']);
+         break;
+       }
+     }
+
+     else {
+       return("No result from DB");
+     }
+   }
+
+   /**
     * Logs a user out
+    * @param [string] $redirectLocation [Were a client needs to go to after the logout]
     */
    public function userLogout($redirectLocation) {
      unset($_SESSION['loginToken']);
@@ -58,17 +106,18 @@ require_once 'Security.class.php';
     * @param  [string] $newPassword [The password that the user wants]
     * @return [boolean]              [If we succesed or not with registering a new user]
     */
-   public function registerNewUser($newEmail, $newPassword) {
+   public function registerNewUser($newEmail, $newPassword, $group) {
      $db = new db();
      $s = new Security();
 
      $password = $this->generateHashPassword($s->checkInput($newPassword));
 
      if (!$this->checkIfEmailExists($newEmail)) {
-       $sql = "INSERT INTO `user`(`mail`, `password`) VALUES (:mail, :password)";
+       $sql = "INSERT INTO `user`(`mail`, `password`, `group`) VALUES (:mail, :password, :group)";
        $input = array(
          "mail" => $s->checkInput($newEmail),
-         "password" => $s->checkInput($password)
+         "password" => $s->checkInput($password),
+         "group" => $s->checkInput($group)
        );
 
        $db->createData($sql, $input);
@@ -227,6 +276,7 @@ require_once 'Security.class.php';
 
      foreach ($result as $key) {
        return($key['password']);
+       break;
      }
    }
 
