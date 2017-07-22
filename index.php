@@ -1,4 +1,10 @@
 <?php
+session_start();
+
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
+
   require_once 'config.php';
   require_once 'model/Router.class.php';
 
@@ -6,10 +12,10 @@
 
   $Router->installedPath = $GLOBALS['config']['base_url'];
 
-  $Router->standardController = 'display';
+  $Router->standardController = 'user';
   $Router->customURLs = array(
-    "login" => "/user/login/",
-    "logout" => "/user/logout/"
+    "login" => "user/loginForm/",
+    "logout" => "user/logout/"
   );
   $Router->customUrl();
   $Router->parseUrl();
