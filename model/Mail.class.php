@@ -20,15 +20,14 @@
       // $this->mail->SMTPDebug = 3;                               // Enable verbose debug output
 
       $this->mail->isSMTP();                                      // Set mailer to use SMTP
-      $this->mail->Host = $GLOBALS['config']['base_url']['mail-host'];  // Specify main and backup SMTP servers
+      $this->mail->Host = $GLOBALS['config']['mail-host'];  // Specify main and backup SMTP servers
       $this->mail->SMTPAuth = true;                               // Enable SMTP authentication
-      $this->mail->Username = $GLOBALS['config']['base_url']['mail-userName'];                 // SMTP username
-      $this->mail->Password = $GLOBALS['config']['base_url']['mail-password'];                           // SMTP password
-      $this->mail->SMTPSecure = $GLOBALS['config']['base_url']['mail-SMTPSecure'];                            // Enable TLS encryption, `ssl` also accepted
-      $this->mail->Port = $GLOBALS['config']['base_url']['mail-port'];                                    // TCP port to connect to
+      $this->mail->Username = $GLOBALS['config']['mail-userName'];                 // SMTP username
       $this->mail->Password = $GLOBALS['config']['mail-password'];                           // SMTP password
+      $this->mail->SMTPSecure = $GLOBALS['config']['mail-SMTPSecure'];                            // Enable TLS encryption, `ssl` also accepted
+      $this->mail->Port = $GLOBALS['config']['mail-port'];                                    // TCP port to connect to
 
-      $this->mail->setFrom($GLOBALS['config']['base_url']['mail-sendFormAdress'], $GLOBALS['config']['base_url']['mail-senderName']);
+      $this->mail->setFrom($GLOBALS['config']['mail-sendFormAdress'], $GLOBALS['config']['mail-senderName']);
       $this->mail->isHTML(true);                                  // Set email format to HTML
     }
 
