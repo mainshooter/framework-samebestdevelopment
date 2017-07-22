@@ -1,7 +1,49 @@
-var ajax;
-var loader;
+var Ajax;
+var Loader;
+
+var Timer;
+var timerInterval;
+var timerTime;
+// Contains the current time from the timer in s
+
 (function() {
-  loader = {
+  Timer = {
+    /**
+     * Increase the current time on the timer by 1 sec
+     * @return {[type]} [description]
+     */
+    counter: function() {
+      timerTime++;
+    },
+
+    /**
+     * Starts the timer
+     * @return {[type]} [description]
+     */
+    start: function() {
+      timerInterval = setInterval(function(){Timer.counter();}, 1000);
+    },
+
+    /**
+     * Ends the timer
+     * @return {[type]} [description]
+     */
+    end: function() {
+      clearInterval(timerInterval)
+    },
+
+    /**
+     * Returns the current time from the timer
+     * @return {[INT]} [The current time that is displaying on the timer]
+     */
+    getCurrentTime: function() {
+      return(timerTime);
+    }
+  }
+})()
+
+(function() {
+  Loader = {
     /**
      * Starts the loader
      */
@@ -18,7 +60,7 @@ var loader;
 })();
 
 (function() {
-  ajax = {
+  Ajax = {
     /**
      * Sends a get request with a callback
      * @param  {[string]} url [Where we want to send the ajax request to]
