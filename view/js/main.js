@@ -1,9 +1,19 @@
-var main;
 var ajax;
-
+var loader;
 (function() {
-  main = {
-    // The main object for your javascript
+  loader = {
+    /**
+     * Starts the loader
+     */
+    start: function() {
+      document.getElementById('loader').className = 'loaderEnable';
+    },
+    /**
+     * Stops the loader
+     */
+    stop: function() {
+      document.getElementById('loader').className = '';
+    }
   }
 })();
 
