@@ -80,7 +80,7 @@ var timerTime;
      */
     get_withoutCallBack: function(url) {
       var xhttp = new XMLHttpRequest();
-      xhttp.open("GET", url, true);
+      xhttp.open("GET", url, false);
       xhttp.send();
     },
     /**
