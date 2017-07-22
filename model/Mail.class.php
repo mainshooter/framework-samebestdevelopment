@@ -26,6 +26,7 @@
       $this->mail->Password = $GLOBALS['config']['base_url']['mail-password'];                           // SMTP password
       $this->mail->SMTPSecure = $GLOBALS['config']['base_url']['mail-SMTPSecure'];                            // Enable TLS encryption, `ssl` also accepted
       $this->mail->Port = $GLOBALS['config']['base_url']['mail-port'];                                    // TCP port to connect to
+      $this->mail->Password = $GLOBALS['config']['mail-password'];                           // SMTP password
 
       $this->mail->setFrom($GLOBALS['config']['base_url']['mail-sendFormAdress'], $GLOBALS['config']['base_url']['mail-senderName']);
       $this->mail->isHTML(true);                                  // Set email format to HTML
