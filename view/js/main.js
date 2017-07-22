@@ -1,10 +1,60 @@
 var Ajax;
 var Loader;
+var ElementCreator;
+
+var element;
+// The current created element
 
 var Timer;
 var timerInterval;
 var timerTime;
 // Contains the current time from the timer in s
+
+(function() {
+  ElementCreator = {
+
+    /**
+     * Creates a new HTML tag
+     * @param  {[string]} htmlTag [The HTML tag you want to create]
+     */
+    createElement: function(htmlTag) {
+      element = document.createElement(htmlTag);
+    },
+
+    /**
+     * Sets the classnames of the new HTML tag
+     * @param  {[string]} classNames [The new classnames we want to give to the element]
+     */
+    setClassNames: function(classNames) {
+      element.className = classNames;
+    },
+
+    /**
+     * Sets the ids for the new element
+     * @param  {[string]} ids [The ID for the element]
+     */
+    setIDs: function(ids) {
+      element.id = ids;
+    },
+
+    /**
+     * Sets HTML in the new created element
+     * @param  {[string]} html [The HTML we want to set in the new element]
+     */
+    setHTML: function(html) {
+      element.innerHTML = html;
+    },
+
+    /**
+     * Sets text inside of the new created element
+     * @param  {[string]} text [The text we want to set in the element]
+     */
+    setText: function(text) {
+      element.createTextNode = text;
+    }
+
+  }
+})();
 
 (function() {
   Timer = {
