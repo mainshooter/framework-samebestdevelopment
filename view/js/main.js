@@ -1,8 +1,9 @@
 var Ajax;
 var Loader;
+
 var ElementCreator;
 
-var element;
+var createdElement;
 // The current created element
 
 var Timer;
@@ -18,7 +19,7 @@ var timerTime;
      * @param  {[string]} htmlTag [The HTML tag you want to create]
      */
     createElement: function(htmlTag) {
-      element = document.createElement(htmlTag);
+      createdElement = document.createElement(htmlTag);
     },
 
     /**
@@ -26,7 +27,7 @@ var timerTime;
      * @param  {[string]} classNames [The new classnames we want to give to the element]
      */
     setClassNames: function(classNames) {
-      element.className = classNames;
+      createdElement.className = classNames;
     },
 
     /**
@@ -34,7 +35,7 @@ var timerTime;
      * @param  {[string]} ids [The ID for the element]
      */
     setIDs: function(ids) {
-      element.id = ids;
+      createdElement.id = ids;
     },
 
     /**
@@ -42,7 +43,7 @@ var timerTime;
      * @param  {[string]} html [The HTML we want to set in the new element]
      */
     setHTML: function(html) {
-      element.innerHTML = html;
+      createdElement.innerHTML = html;
     },
 
     /**
@@ -50,7 +51,16 @@ var timerTime;
      * @param  {[string]} text [The text we want to set in the element]
      */
     setText: function(text) {
-      element.createTextNode = text;
+      createdElement.createTextNode = text;
+    },
+    place: function(id) {
+      if (createdElement != '') {
+        document.getElementById(id).appendChild(element);
+      }
+      else {
+        console.log('No element was created first! Use ElementCreator.createElement');
+      }
+
     }
 
   }
@@ -90,7 +100,7 @@ var timerTime;
       return(timerTime);
     }
   }
-})()
+})();
 
 (function() {
   Loader = {
