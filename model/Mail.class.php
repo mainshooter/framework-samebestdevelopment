@@ -47,7 +47,7 @@
       if(!$this->mail->send()) {
           return("Failed " . $this->mail->ErrorInfo);
       } else {
-          return('Succes');
+          return(true);
       }
     }
   }
