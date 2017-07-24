@@ -28,7 +28,7 @@
   }
 
   /**
-   * Replace a template tag {name} with the good content from te array
+   * Replace a template tag as follow: {site-title} with the good content from te array
    * $array = array(
    *    'site-title' => 'framework-samebestdevelopment'
    *  );
@@ -46,6 +46,14 @@
     else {
       return('No arr array has been given');
     }
+  }
+
+  /**
+   * Returns the procesed template
+   * @return [string] [The proced template]
+   */
+  public function getfinishedTemplate() {
+    return($this->templateContent);
   }
 
 
