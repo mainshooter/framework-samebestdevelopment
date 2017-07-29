@@ -7,12 +7,13 @@
      * Gets the template and place it in the property
      * A template file must and on .tpl
      * @param  string/boolean $location [With the location of the file]
-     * @return [string]            [A error if something goes wrong]
+     * @return [string / boolean]            [A error if something goes wrong / on succes]
      */
     public function getTemplateContent($fileLocation = false) {
       if ($fileLocation != false) {
         if (file_exists($fileLocation)) {
           $this->templateContent = file_get_contents($fileLocation);
+          return(true);
         }
 
         else {
