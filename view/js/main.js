@@ -122,13 +122,13 @@ var timerTime;
     /**
      * Starts the loader
      */
-    start: function() {
+    enable: function() {
       document.getElementById('loader').className = 'loaderEnable';
     },
     /**
      * Stops the loader
      */
-    stop: function() {
+    disable: function() {
       document.getElementById('loader').className = '';
     }
   }
