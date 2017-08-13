@@ -431,11 +431,3 @@ keyCodes = {
   244 : "kanji",
   255 : "toggle touchpad"
 };
-
-KeyDetector.setKeyPressReturnFunction(test);
-KeyDetector.enable();
-
-
-function test(keyLogger) {
-  console.log(keyLogger);
-}
