@@ -2,7 +2,6 @@ var Ajax;
 var Loader;
 var KeyDetector;
 var ElementCreator;
-var Typer;
 
 var keyDetectorStatus;
 // To save if we enable to keylogger yes or no
