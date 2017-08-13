@@ -2,6 +2,7 @@ var Ajax;
 var Loader;
 var KeyDetector;
 var ElementCreator;
+var Typer;
 
 var keyDetectorStatus;
 // To save if we enable to keylogger yes or no
@@ -63,6 +64,11 @@ var timerTime;
     setText: function(text) {
       createdElement.createTextNode = text;
     },
+
+    /**
+     * Places the created element on the DOM!
+     * @param  {[string]} id [The ID of the element we want to place it on]
+     */
     place: function(id) {
       if (createdElement != '') {
         document.getElementById(id).appendChild(element);
