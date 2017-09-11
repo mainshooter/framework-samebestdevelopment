@@ -30,6 +30,7 @@
         <link rel="stylesheet" href="<?php echo $GLOBALS['config']['base_url']; ?>view/style/framework-style.css" type="text/css">
 
         <script src="<?php echo $GLOBALS['config']['base_url']; ?>view/js/main.js"></script>
+        <script src="<?php echo $GLOBALS['config']['base_url']; ?>view/js/project.js"></script>
       </head>
     <body>
 
