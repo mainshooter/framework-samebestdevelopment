@@ -2,36 +2,32 @@ var Ajax;
 var Loader;
 var KeyDetector;
 var ElementCreator;
-var Listners;
+var Listner;
+var Timer;
+var MultiArrayVisualizer;
+var VideoHandler;
+var NumberHandler;
 // The classes
 
-var keyDetectorStatus;
-// To save if we enable to keylogger yes or no
-var keyPressReturnFunction;
-// Saves the function name we later want to use to send the translated keypress to
-var lastKeyPress;
-// The key we last have pressed
-var keyCodes;
-// All the keyCodes
 
 
-var createdElement;
-// The current created element
 
-var Timer;
-var timerInterval;
-var timerTime;
-// Contains the current time from the timer in s
+
+
+
 
 (function() {
   ElementCreator = {
+
+    createdElement: '',
+    // The current created element
 
     /**
      * Creates a new HTML tag
      * @param  {[string]} htmlTag [The HTML tag you want to create]
      */
     createElement: function(htmlTag) {
-      createdElement = document.createElement(htmlTag);
+      ElementCreator.createdElement = document.createElement(htmlTag);
     },
 
     /**
@@ -39,7 +35,9 @@ var timerTime;
      * @param  {[string]} classNames [The new classnames we want to give to the element]
      */
     setClassNames: function(classNames) {
+      var createdElement = ElementCreator.createdElement;
       createdElement.className = classNames;
+      ElementCreator.createdElement = createdElement;
     },
 
     /**
@@ -47,7 +45,9 @@ var timerTime;
      * @param  {[string]} ids [The ID for the element]
      */
     setIDs: function(ids) {
+      var createdElement = ElementCreator.createdElement;
       createdElement.id = ids;
+      ElementCreator.createdElement = createdElement;
     },
 
     /**
@@ -55,7 +55,9 @@ var timerTime;
      * @param  {[string]} html [The HTML we want to set in the new element]
      */
     setHTML: function(html) {
+      var createdElement = ElementCreator.createdElement;
       createdElement.innerHTML = html;
+      ElementCreator.createdElement = createdElement;
     },
 
     /**
@@ -63,16 +65,19 @@ var timerTime;
      * @param  {[string]} text [The text we want to set in the element]
      */
     setText: function(text) {
+      var createdElement = ElementCreator.createdElement;
       createdElement.createTextNode = text;
+      ElementCreator.createdElement = createdElement;
     },
 
     /**
      * Places the created element on the DOM!
      * @param  {[string]} id [The ID of the element we want to place it on]
      */
-    place: function(id) {
+    place: function(element) {
+      var createdElement = ElementCreator.createdElement;
       if (createdElement != '') {
-        document.getElementById(id).appendChild(element);
+        select(element).appendChild(createdElement);
       }
       else {
         console.log('No element was created first! Use ElementCreator.createElement');
@@ -85,12 +90,41 @@ var timerTime;
 
 (function() {
   Timer = {
+
+    time: 0,
+    // Contain the current time in seconds
+
+    timerCallback: '',
+    // The callback function
+
+    timeInterval: '',
+    // Contain the interval
+
+    timeOutMiliseconds: 1000,
+
     /**
      * Increase the current time on the timer by 1 sec
      * @return {[type]} [description]
      */
-    counter: function() {
-      timerTime++;
+    count: function() {
+      Timer.time++;
+    },
+
+    /**
+     * Sets the callback function for the timer when it runs
+     * @param  {[Function]} functionName [The name of the function]
+     */
+    setTimerCallback: function(functionName) {
+      Timer.timerCallback = functionName;
+    },
+
+    /**
+     * Sets the time for the timeout for the set interval
+     * By default it is 1000 miliseconds (1 second)
+     * @param  {[int]} timeInMiliseconds [The timeout time in miliseconds]
+     */
+    setTimeOut: function(timeInMiliseconds) {
+      Timer.timeOutMiliseconds = timeInMiliseconds;
     },
 
     /**
@@ -98,7 +132,13 @@ var timerTime;
      * @return {[type]} [description]
      */
     start: function() {
-      timerInterval = setInterval(function(){Timer.counter();}, 1000);
+      Timer.timerInterval = setInterval(function(){
+        Timer.timerCallback(Timer.getCurrentTime());
+        // By default we send the current time of the timer, to the callback function
+
+        Timer.count();
+        // Increase the counter
+      }, Timer.timeOutMiliseconds);
     },
 
     /**
@@ -106,7 +146,7 @@ var timerTime;
      * @return {[type]} [description]
      */
     end: function() {
-      clearInterval(timerInterval)
+      clearInterval(Timer.timerInterval);
     },
 
     /**
@@ -114,7 +154,7 @@ var timerTime;
      * @return {[INT]} [The current time that is displaying on the timer]
      */
     getCurrentTime: function() {
-      return(timerTime);
+      return(Timer.time);
     }
   }
 })();
@@ -149,11 +189,22 @@ var timerTime;
    *
    */
   KeyDetector = {
+
+    status: false,
+    // All the keyCodes
+
+    lastKeyPress: [],
+    // The key we last have pressed
+
+    keyPressReturnFunction: '',
+    // Saves the function name we later want to use to send the translated keypress to
+
+
     /**
      * Enables the key detector
      */
     enable: function() {
-      keyDetectorStatus = true;
+      KeyDetector.status = true;
       document.addEventListener('keydown', function(){ KeyDetector.keyPressTranslator(event); });
       console.log('KeyDetector is enabled');
     },
@@ -162,7 +213,7 @@ var timerTime;
      * Disabled the key detector
      */
     disable: function() {
-      keyDetectorStatus = false;
+      KeyDetector.status = false;
       document.removeEventListener('keydown', function() { KeyDetector.keyPressTranslator(); });
       console.log('KeyDetector is disabled');
     },
@@ -172,7 +223,7 @@ var timerTime;
      * @return {[boolean]} [If it is enabled or not]
      */
     getStatus: function() {
-      return(keyDetectorStatus);
+      return(KeyDetector.status);
     },
 
     /**
@@ -180,7 +231,7 @@ var timerTime;
      * @param  {[function]} functionName [The name of the function]
      */
     setKeyPressReturnFunction: function(functionName) {
-      keyPressReturnFunction = function() { functionName(lastKeyPress); };
+      KeyDetector.keyPressReturnFunction = function() { functionName(KeyDetector.lastKeyPress); };
     },
 
     /**
@@ -190,13 +241,13 @@ var timerTime;
     keyPressTranslator: function(event) {
       if (KeyDetector.getStatus() == true) {
 
-        if (keyPressReturnFunction != '') {
+        if (KeyDetector.keyPressReturnFunction != '') {
           var keyCode = event.keyCode;
           // Contains a array with the keycode and what the code means
 
-            lastKeyPress = [keyCode ,keyCodes[keyCode]];
+            KeyDetector.lastKeyPress = [keyCode ,keyCodes[keyCode]];
 
-          keyPressReturnFunction();
+          KeyDetector.keyPressReturnFunction();
         }
 
         else {
@@ -275,10 +326,10 @@ var timerTime;
 })();
 
 (function() {
-  Listners = {
+  Listner = {
     /**
      * Adds a event listner to a element
-     * @param  {[string]} element      [The ID of a element]
+     * @param  {[string]} element      [The identifyer of a element]
      * @param  {[string]} eventName    [The name of the event we want to add to the element]
      * @param  {[function]} functionName [The name of the function we want to link to the element]
      */
@@ -288,7 +339,7 @@ var timerTime;
 
     /**
      * Removes a event listner from a element
-     * @param  {[string]} element      [The ID of a element]
+     * @param  {[string]} element      [The identifyer of a element]
      * @param  {[string]} eventName    [The name of the event we want to remove of a element]
      * @param  {[function]} functionName [The name of a function we want to link to the element]
      */
@@ -297,6 +348,198 @@ var timerTime;
     }
   }
 })();
+
+(function() {
+  /**
+   * To generate a table from a 2 dimensional array
+   */
+  MultiArrayVisualizer = {
+    multiArray: [],
+    // Contains the current array
+
+    /**
+     * Sets the multi dimensional array
+     * @param  {[arr]} IncomingArray [The 2 dimensional array for this obj]
+     */
+    setMultiArray: function(IncomingArray) {
+      MultiArrayVisualizer.multiArray = IncomingArray;
+    },
+
+    /**
+     * Generates the content for the table (td's)
+     * @return {[string]} [The HTML code]
+     */
+    tableContent: function() {
+      var content = '';
+      var currentArray = MultiArrayVisualizer.multiArray;
+      currentArray.forEach(function(rowArray, index, arr) {
+        // To loop trough the first layer of the array
+        content += '<tr>';
+        rowArray.forEach(function(value, index, arr) {
+          // To loop trough the second layer of the array
+          content += '<td>' + value +  '</td>';
+        });
+        content += '</tr>';
+      });
+      return(content);
+    },
+
+    /**
+     * Generates a table when the multiArray is set
+     * @return {[string / boolean]} [On succes we return the table / When it fails we return false]
+     */
+    generateTable: function() {
+      if (MultiArrayVisualizer.multiArray.length > 0) {
+        // If the array a array is set
+        var table = '<table>';
+        table += MultiArrayVisualizer.tableContent();
+        table += '</table>';
+        return(table);
+      }
+
+      else {
+        console.log("No array has been set!, use MultiArrayVisualizer.setMultiArray to set a array");
+        return(false);
+      }
+
+    }
+  }
+})();
+
+(function() {
+  /**
+   * Can controll a Video
+   */
+  VideoHandler = {
+    videoHandlerElement: '',
+
+    /**
+     * You set the element for the obj to work with it later
+     * @param  {[string]} element [The element identifyer]
+     */
+    setVideoElement: function(element) {
+      VideoHandler.videoHandlerElement = select(element);
+    },
+
+    /**
+     * Plays the video
+     */
+    play: function() {
+      VideoHandler.videoHandlerElement.play();
+    },
+
+    /**
+     * Pauses the video and set the time of the video to the start
+     */
+    stop: function() {
+      VideoHandler.pause();
+      VideoHandler.setCurrentTime(0);
+    },
+
+    /**
+     * Pauses the video
+     */
+    pause: function() {
+      VideoHandler.videoHandlerElement.pause();
+    },
+
+    /**
+     * Controlls the volume of the video
+     * @param  {[float]} volumeLvl [0.0 to 1.0 form silent to loud]
+     */
+    volume: function(volumeLvl) {
+      VideoHandler.videoHandlerElement = volumeLvl;
+    },
+
+    /**
+     * Controlls the speed of the video is playing
+     * @param  {[float]} speedLvl [0.1 to 1.0 from slow to normal or faster!]
+     */
+    playbackRate: function(speedLvl) {
+      VideoHandler.videoHandlerElement = speedLvl;
+    },
+
+    /**
+     * Sets the current time of were the video is playing
+     * @param  {[int]} timeInSeconds [The time in seconds were you want to get the video to]
+     */
+    setCurrentTime: function(timeInSeconds) {
+      VideoHandler.videoHandlerElement = timeInSeconds;
+    },
+
+    /**
+     * Returns the lenght of the full video
+     * @return {[int]} [The time in seconds]
+     */
+    getFullLenght: function() {
+      return(VideoHandler.videoHandlerElement.duration);
+    },
+
+    /**
+     * Returns the current time of were the video is playing
+     * @return {[int]} [The current time of the video in seconds]
+     */
+    getCurrentPlayTime: function() {
+      return(VideoHandler.videoHandlerElement.currentTime);
+    },
+
+    /**
+     * Returns the video status of the video element
+     * If the video is playing or not
+     * @return {[string]} [Return the play status as a string]
+     */
+    getVideoStatus: function() {
+      if (VideoHandler.videoHandlerElement.paused === true) {
+        return('paused');
+      }
+
+      else if (VideoHandler.videoHandlerElement.paused === false) {
+        return('playing');
+      }
+    }
+  }
+})();
+
+(function() {
+  NumberHandler = {
+    /**
+     * Checks if a number is even
+     * @param  {[int]} number [The number you want to check]
+     * @return {[boolean]}        [If it is a even number, we return true]
+     */
+    CheckIfNumerIsEven: function(number) {
+      var result = number / 2;
+      if (Number.isInteger(result) === true) {
+        // It is even
+        return(true);
+      }
+
+      else {
+        // It isn't even
+        return(false);
+      }
+    },
+
+    /**
+     * Checks if a number is odd
+     * @param  {[int]} number [The number we want to check]
+     * @return {[boolean]}        [Returns true if a number is odd]
+     */
+    checkIfNumberIsOdd: function(number) {
+      var result = number / 2;
+      if (Number.isInteger(result) === true) {
+        // It is even
+        return(false);
+      }
+
+      else {
+        // It odd
+        return(true);
+      }
+    }
+  }
+})();
+
 
 /**
  * Selects one element
@@ -316,7 +559,7 @@ function selectAll(elements) {
   return(document.querySelectorAll(elements));
 }
 
-keyCodes = {
+var keyCodes = {
   3 : "break",
   8 : "backspace / delete",
   9 : "tab",
