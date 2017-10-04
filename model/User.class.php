@@ -1,151 +1,74 @@
 <?php
-require_once 'databaseHandler.class.php';
-require_once 'Security.class.php';
+require_once 'model/databaseHandler.class.php';
+require_once 'model/Security.class.php';
 
  class User {
-   private $mail;
-   private $password;
+   private $Security;
+   private $DatabaseHandler;
+
    private $loginToken;
-   private $pageAcces;
+   private $allowedRoles;
 
    function __construct() {
      $this->loginToken = 'h79vr29hu3pqhf-249pgae';
+
+     $this->Security = new Security();
+     $this->DatabaseHandler = new db();
    }
 
    /**
-    * User login handler
-    * @param  [string] $userInputMail     [The mail adress that the user filled in]
-    * @param  [string] $userInputPassword [The password the user filled in]
-    * @param [string] $redirectLocation The location that we need the user to redirect to
-    * @param [boolean] [If the login is not succesed we send a false]
+    * [userLogin description]
+    * @param  [string] $clientMail     [The mail adress of the client]
+    * @param  [string] $clientPassword [The password of the client]
+    * @return [boolean]                 [If a login is succesfully we return true else we return false]
     */
-   public function userLogin($userInputMail, $userInputPassword, $redirectLocation) {
-     if ($this->checkIfEmailExists($userInputMail)) {
+   public function userLogin($clientMail, $clientPassword) {
+     if ($this->checkIfEmailExists($clientMail) === true) {
+       // If we the mail exists
 
-       $orginalHashedPassword = $this->getOrginalPassword($userInputMail);
+       $clientMail = $this->Security->checkInput($clientMail);
+       $clientPassword = $this->Security->checkInput($clientPassword);
 
-       if ($this->validatePassword($userInputPassword, $orginalHashedPassword)) {
-         $this->saveUserCredentials($userInputMail);
-         $this->setLoginToken();
-         $this->setUserGroup($userInputMail);
-         header("Refresh:0; " . $redirectLocation);
-       }
-       else {
-          return(false);
-       }
-     }
-
-     else {
-       return(false);
-     }
-   }
-
-   /**
-    * Gets the userID from a user by mail
-    * @param  [string] $userMail [The mail adress of a user]
-    * @return [int]           [The userID of the user]
-    */
-   public function getUserID($userMail) {
-     $Db = new db();
-     $S = new Security();
-
-       $sql = "SELECT iduser FROM user WHERE `mail`=:mail LIMIT 1";
-       $input = array(
-         "mail" => $S->checkInput($userMail)
-       );
-       $result = $Db->readData($sql, $input);
-       foreach ($result as $key) {
-         return($key['iduser']);
-         break;
-       }
-   }
-
-   /**
-    * Gets the mail from a user by the userID
-    * @param  [int] $userID [The ID of the user]
-    * @return [string]         [The mail adress from the user or a error message that nothing has been found]
-    */
-   public function getUserMail($userID) {
-     $Db = new db();
-     $S = new Security();
-
-     $sql = "SELECT `mail` FROM user WHERE iduser=:userID LIMIT 1";
-     $input = array(
-       "userID" => $S->checkInput($userID)
-     );
-     $result = $Db->readData($userID);
-
-     if (!empty($result)) {
-       foreach ($result as $key) {
-         return($key['mail']);
-         break;
-       }
-     }
-
-     else {
-       return("No result from DB");
-     }
-   }
-
-   /**
-    * Logs a user out
-    * @param [string] $redirectLocation [Were a client needs to go to after the logout]
-    */
-   public function userLogout($redirectLocation) {
-     unset($_SESSION['loginToken']);
-     unset($_SESSION['userMail']);
-     unset($_SESSION['userGroup']);
-
-     header("Refresh:0; " . $redirectLocation);
-   }
-
-   /**
-    * Registers a new user
-    * If the mail adress isn't in our db
-    * @param  [string] $newEmail    [The mail adress from the user]
-    * @param  [string] $newPassword [The password that the user wants]
-    * @return [boolean]              [If we succesed or not with registering a new user]
-    */
-   public function registerNewUser($newEmail, $newPassword, $group) {
-     $db = new db();
-     $s = new Security();
-
-     $password = $this->generateHashPassword($s->checkInput($newPassword));
-
-     if (!$this->checkIfEmailExists($newEmail)) {
-       $sql = "INSERT INTO `user`(`mail`, `password`, `group`) VALUES (:mail, :password, :group)";
-       $input = array(
-         "mail" => $s->checkInput($newEmail),
-         "password" => $s->checkInput($password),
-         "group" => $s->checkInput($group)
-       );
-
-       $db->createData($sql, $input);
-
-       return(true);
-     }
-     else {
-       return(false);
-     }
-   }
-
-   /**
-    * This function checks if a client has acces
-    * It checks if we have a login token
-    * And if we can acces it with our group
-    * @return [boolean] [If we have acces or not]
-    */
-   public function checkIfUserHasAcces() {
-     if ($this->checkLoginToken() == true) {
-       if ($this->checkUserGroup() == true) {
+       $orginalHashedPassword = $this->getHashedPasswordFromDatabase($clientMail);
+       if ($this->validatePassword($clientPassword, $orginalHashedPassword) === true) {
+         // Password match
+         $this->logUserIn($clientMail);
          return(true);
        }
 
        else {
-         // false
+         // passwords don't match
          return(false);
        }
+     }
 
+     else {
+       // Mail doens't exists
+       return(false);
+     }
+   }
+
+   /**
+    * Registers a new user
+    * @param  [string] $userMail     [The mail adress of the client we want to register]
+    * @param  [string] $userPassword [The password of the client we want to register NOT hassed]
+    * @param  [string] $role         [The role we want to give to the client]
+    * @return [boolean]               [On succes we return true on succes]
+    */
+   public function registerUser($userMail, $userPassword, $role) {
+     $hashedPassword = $this->hashPassword($this->Security->checkInput($userPassword));
+
+     if ($this->checkIfEmailExists($userMail) === false) {
+       // Mail adress doens't exists
+       $sql = "INSERT INTO user (`mail` , `password`, `role`) VALUES (:mail, :password, :role)";
+       $input = array(
+         "mail" => $this->Security->checkInput($userMail),
+         "password" => $this->Security->checkInput($hashedPassword),
+         "role" => $this->Security->checkInput($role)
+       );
+
+       $this->DatabaseHandler->CreateData($sql, $input);
+       return(true);
      }
 
      else {
@@ -154,84 +77,18 @@ require_once 'Security.class.php';
    }
 
    /**
-    * Sets the acces for a page
-    * @param [array] $groups [The groups]
+    * Checks if a mail adress exists
+    * @param  [string] $userMailInput [The mail adress we want to check]
+    * @return [boolean]                [If the mail adress exists we return true]
     */
-   public function setPageAcces($groups) {
-     $this->pageAcces = $groups;
-   }
-
-   /**
-    * This function saves the mail from a logged in user in a session
-    * @param  [string] $mail [The mail of the user]
-    */
-   private function saveUserCredentials($mail) {
-     $S = new Security();
-
-     $_SESSION['userMail'] = $S->checkInput($mail);
-   }
-
-   /**
-    * Checks if a user has acces to a page
-    * @return [boolean] [description]
-    */
-   private function checkUserGroup() {
-     foreach ($this->pageAcces as $key) {
-       if ($key == $_SESSION['userGroup'] || $_SESSION['userGroup'] == 'admin') {
-         $result = true;
-         break;
-         // We break the loop, other wise it could overwrite the result that someone has acces
-       }
-       else {
-         $result = false;
-       }
-     }
-     return($result);
-
-   }
-
-   /**
-    * This function sets the group of a user in the session
-    * @param [string] $mail [The mail account of the loged in user]
-    */
-   private function setUserGroup($mail) {
-     $Db = new db();
-     $S = new Security();
-
-     $sql = "SELECT `group` FROM user WHERE `mail`=:mail";
-     $input = array(
-       "mail" => $S->checkInput($mail)
-     );
-     $result = $Db->readData($sql, $input);
-
-     foreach ($result as $key) {
-       $_SESSION['userGroup'] = $key['group'];
-     }
-   }
-
-   /**
-    * Sets the login token when the client has succesfully logged in
-    */
-   private function setLoginToken() {
-     $_SESSION['loginToken'] = $this->loginToken;
-   }
-
-   /**
-    * Checks if a email exists in the db
-    * @param  [stirng] $userMailInput [The input from the user that contains the mail adress]
-    * @return [boolean]                [If the mail exists in the db]
-    */
-   private function checkIfEmailExists($userMailInput) {
-     $db = new db();
-     $s = new Security();
-
+   public function checkIfEmailExists($userMailInput) {
      $sql = "SELECT `mail` FROM user WHERE `mail`=:mail";
      $input = array(
-       "mail" => $s->checkInput($userMailInput)
+       "mail" => $this->Security->checkInput($userMailInput)
      );
-     $result = $db->countRows($sql, $input);
+     $result = $this->DatabaseHandler->countRows($sql, $input);
 
-     if ($result > 0) {
+     if ($result == 1) {
        return(true);
      }
      else if ($result == 0) {
@@ -240,84 +97,189 @@ require_once 'Security.class.php';
    }
 
    /**
-    * Validate a if the password that was filled in was correct
-    * @param  [string] $userInputPassword [The password that the client filled in]
-    * @param  [hashed string] $hashedPassword    [The hashed password from the db]
-    * @return [boolean]      [If the passwords are the same]
+    * Sets who has acces to a page
+    * As a array
+    * @param [array] $allowedRoles [All the roles who are allowed to the page]
     */
-   private function validatePassword($userInputPassword, $hashedPassword) {
+   public function setPageAcces($allowedRoles) {
+     $this->allowedRoles = $allowedRoles;
+   }
 
-     if (password_verify($userInputPassword, $hashedPassword)) {
-       $result = true;
+   /**
+    * Checks if a client has acces to a page
+    * @param  boolean $role [When a role is send as a argument we use that role to check if the client has acces]
+    * @return [boolean]        [When a client has acces we return true]
+    */
+   public function checkIfClientHasAcces($role = false) {
+     if (ISSET($_SESSION['loginToken'])) {
+       if ($_SESSION['loginToken'] === $this->loginToken) {
 
+         if ($role != false) {
+           // if we have send a role we compaire them
+           if ($role == $this->getUserRole()) {
+             return(true);
+           }
+
+           else {
+             // Not the good role
+             return(false);
+           }
+         }
+
+         else {
+           // No allowed role has been send so we use the allowRoles property
+           foreach ($this->allowedRoles as $role) {
+             if ($role == $this->loginToken) {
+               return(true);
+               break;
+             }
+
+             else {
+               $result = false;
+             }
+           }
+         }
+       }
+
+       else {
+         $result = false;
+       }
      }
-     else if (!password_verify($userInputPassword, $hashedPassword)) {
+
+     else {
        $result = false;
-
      }
-
      return($result);
    }
 
    /**
-    * Gets the orginal hashed password from the database
-    * @param  [stirng] $userMail [The mail of the user]
-    * @return [string]           [The hashed password from the db]
+    * Logs a client out
+    * @return [bolean] [Return a true when a client is loged out]
     */
-   private function getOrginalPassword($userMail) {
-     $db = new db();
-     $s = new Security();
+   public function logoutUser() {
+     unset($_SESSION);
+     return(true);
+   }
 
-     $sql = "SELECT password FROM user WHERE `mail`=:mail";
-     $input = array(
-       "mail" => $s->checkInput($userMail)
-     );
-     $result = $db->readData($sql, $input);
+   /**
+    * If a client is logtin we return the userID
+    * @return [int] [The ID of the user]
+    */
+   public function getUserID() {
+     if (ISSET($_SESSION['userID'])) {
+       return($_SESSION['userID']);
+     }
 
-     foreach ($result as $key) {
-       return($key['password']);
-       break;
+     else {
+       return(false);
      }
    }
 
    /**
-    * Generates a hashed password
-    * @param  [string] $password [The incomeping unhashed password]
-    * @return [string hashed] [The new password]
+    * Gets the mail adress of the user if he is logged in
+    * @return [string] [The mail adress of the client]
     */
-   private function generateHashPassword($password) {
-     $s = new Security();
-     $password = $s->checkInput($password);
+   public function getUserMail() {
+     if (ISSET($_SESSION['userMail'])) {
+       return($_SESSION['userMail']);
+     }
 
-     $password = password_hash($password, PASSWORD_DEFAULT);
-
-     return($password);
+     else {
+       return(false);
+     }
    }
 
+   /**
+    * Gets the roll of a user
+    * @return [string] [The name of the rol of the user]
+    */
+   private function getUserRole() {
+     if (ISSET($_SESSION['userRole'])) {
+       return($_SESSION['userRole']);
+     }
+
+     else {
+       return(false);
+     }
+   }
 
    /**
-    * Checks the login token for a user
-    * @return [boolean] [Returns if the login token is the same]
+    * Compairs the password of the client with the hashed password
+    * @param  [string] $clientPassword [The not hashed password of the client]
+    * @param  [string] $hashedPassword [The hashed password from the user from the db]
+    * @return [boolean]                 [Return true if the passwords are the same]
     */
-   private function checkLoginToken() {
-     // Checks if the user has the same login token
-     // Returns true or false
-     if (ISSET($_SESSION['loginToken'])) {
-       if ($_SESSION['loginToken'] === $this->loginToken) {
-         return(true);
-       }
-       else {
-         return(false);
-       }
+   private function validatePassword($clientPassword, $hashedPassword) {
+     if (password_verify($clientPassword, $hashedPassword) === true) {
+       return(true);
+
      }
      else {
        return(false);
      }
    }
 
-   public function isLogedIn() {
-     return($this->checkLoginToken());
+   /**
+    * Logs a user in
+    * By filling in the session variables we need to check if the client is logged in
+    * @param  [string] $userMail [The mail adress of the client]
+    */
+   private function logUserIn($userMail) {
+     $userInfo = $this->getUserInfo($userMail);
+
+     $_SESSION['loginToken'] = $this->loginToken;
+     $_SESSION['userMail'] = $userMail;
+
+     foreach ($userInfo as $user) {
+       $_SESSION['userID'] = $user['userID'];
+       $_SESSION['userRole'] = $user['role'];
+     }
    }
+
+   /**
+    * Gets some user info from the client
+    * Contains the ID of the user and to role of them
+    * @param  [string] $userMail [The mail adress of the user]
+    * @return [arr]           [The result from the db]
+    */
+   private function getUserInfo($userMail) {
+     $sql = "SELECT userID, role FROM user WHERE mail=:clientMail";
+     $input = array(
+       "clientMail" => $this->Security->checkInput($userMail)
+     );
+
+     $result = $this->DatabaseHandler->readData($sql, $input);
+     return($result);
+   }
+
+   /**
+    * Hashes a password
+    * @param  [string] $blankPassword [The password we want to hash]
+    * @return [string]                [The password but then hashed]
+    */
+   private function hashPassword($blankPassword) {
+     $password = password_hash($blankPassword, PASSWORD_DEFAULT);
+
+     return($password);
+   }
+
+   /**
+    * Gets the hashed password from a user from the db
+    * @param  [string] $userMail [The mail adress of the user]
+    * @return [string]           [The hashed password from the db]
+    */
+   private function getHashedPasswordFromDatabase($userMail) {
+     $sql = "SELECT password FROM user where `mail`=:mail";
+     $input = array(
+       "mail" => $this->Security->checkInput($userMail)
+     );
+
+     $result = $this->DatabaseHandler->readData($sql, $input);
+     foreach ($result as $key) {
+       return($key['password']);
+     }
+   }
+
  }
 
 // $user = new User();
