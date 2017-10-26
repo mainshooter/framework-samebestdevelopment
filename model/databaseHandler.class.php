@@ -41,6 +41,7 @@ require_once 'config.php';
         return("Succes");
       }
       catch (Exception $e) {
+        die('<h1>NO DB CONNECTION</h1>');
         return ("Connection failed: " . $e->getMessage());
       }
     }
