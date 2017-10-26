@@ -53,22 +53,25 @@ require_once 'model/Security.class.php';
     * @param  [string] $userMail     [The mail adress of the client we want to register]
     * @param  [string] $userPassword [The password of the client we want to register NOT hassed]
     * @param  [string] $role         [The role we want to give to the client]
-    * @return [boolean]               [On succes we return true on succes]
+    * @return [string]               [The activation key for a client to send it in the mail for a activation]
     */
    public function registerUser($userMail, $userPassword, $role) {
      $hashedPassword = $this->hashPassword($this->Security->checkInput($userPassword));
 
      if ($this->checkIfEmailExists($userMail) === false) {
        // Mail adress doens't exists
-       $sql = "INSERT INTO user (`mail` , `password`, `role`) VALUES (:mail, :password, :role)";
+       $activationKey = $this->generateActivationKey();
+       $sql = "INSERT INTO user (`mail` , `password`, `role`, `activationkey`, `activated`) VALUES (:mail, :password, :role, :activationKey, :activated)";
        $input = array(
          "mail" => $this->Security->checkInput($userMail),
          "password" => $this->Security->checkInput($hashedPassword),
-         "role" => $this->Security->checkInput($role)
+         "role" => $this->Security->checkInput($role),
+         "activationKey" => $activationKey,
+         "activated" => 0
        );
 
        $this->DatabaseHandler->CreateData($sql, $input);
-       return(true);
+       return($activationKey);
      }
 
      else {
@@ -201,6 +204,16 @@ require_once 'model/Security.class.php';
      else {
        return(false);
      }
+   }
+
+   private function generateActivationKey() {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+          $randomString .= $characters[rand(0, $charactersLength - 1)];
+      }
+      return $randomString;
    }
 
    /**
