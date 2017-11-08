@@ -3,7 +3,8 @@ session_start();
 
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-ini_set("display_errors", 1);
+
+header('X-Frame-Options: DENY');
 
   require_once 'config.php';
   require_once 'model/Router.class.php';
