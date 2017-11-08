@@ -271,7 +271,7 @@ require_once 'model/Security.class.php';
     * @return [string]                [The password but then hashed]
     */
    private function hashPassword($blankPassword) {
-     $password = password_hash($blankPassword, PASSWORD_DEFAULT);
+     $password = password_hash($blankPassword, PASSWORD_BCRYPT);
 
      return($password);
    }
