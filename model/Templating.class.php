@@ -39,6 +39,7 @@
   public function replaceTemplateTags($tags) {
     if (!empty($tags)) {
       foreach ($tags as $key => $value) {
+        $key = str_replace(' ', '', $key);
         $this->templateContent = str_replace('{ ' . $key . ' }', $value, $this->templateContent);
         $this->templateContent = str_replace('{' . $key . '}', $value, $this->templateContent);
       }
