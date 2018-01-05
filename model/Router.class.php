@@ -1,190 +1,131 @@
 <?php
 
-  class Router {
-    public $installedPath = '';
-    public $standardController = '';
-    public $standardMethod = 'index';
+  class Router2 {
+    private $rootPath;
+    private $router_request;
 
-    public $translateControllerNames;
-    // $translateControllerNames[name of the translation] = the name of the real controller
-    // Contains the new value for a controller name
+    private $default_controller;
 
-    public $customURLs;
-    // Contains a customer url
-    // When someone does /login/
-    // It will replace that with the correct controller and method
-    // So that will be /user/login/
-
-    private $url;
-    private $path;
     private $controller;
     private $method;
     private $parameters;
 
-    public function __construct() {
-      $this->url = $this->getUrl();
+    /**
+     * Sets our root path so we can filter the request
+     * @param [string] $base_url [the full url of the browser: e.g. http://localhost/]
+     */
+    public function __construct($base_url) {
+      $fullUrl = $_SERVER['REQUEST_URI'];
+      $rootPath = $this->get_root_dir($base_url);
+
+      $this->router_request = explode('/',str_replace($rootPath, '', $fullUrl));
     }
 
     /**
-     * Transform the url to a customer url
-     * So when someone goes the /login/
-     * We go to our custom url we defined for it
-     * We define the url as property in the $customerURLs as a array
-     * array(
-     *  "login" => "user/logout";
-     * );
+     * Gets the root directory of our project
+     * @param  [string] $base_url [The base url of our project]
+     * @return [string]           [Our root path wich we can use to make it work]
      */
-    public function customUrl() {
-      $url = str_replace($this->installedPath, '', $this->url);
-      // To get our current URL
-      $url = str_replace($GLOBALS['config']['base_url'], '', $this->url);
-      $url = str_replace('/', '', $url);
+    private function get_root_dir($base_url) {
+      $urlExploded = explode('/', $base_url);
+      unset($urlExploded[0]);
+      unset($urlExploded[1]);
+      unset($urlExploded[2]);
 
-      // To remove any / after the word
-      if (!empty($this->customURLs)) {
-        // If we have any customer urls
-        foreach ($this->customURLs as $key => $value) {
-          if ($key == $url) {
-            $this->url = $value;
+      $urlExploded = array_values($urlExploded);
+      foreach ($urlExploded as $url) {
+        $this->rootPath = $this->rootPath . '/' . $url;
+      }
+      return($this->rootPath);
+    }
+
+    public function proces_router() {
+      $this->get_controller();
+      $this->get_method();
+      $this->get_parameters();
+
+      require_once 'controller/' . $this->controller . 'Controller.php';
+
+      $fullControllerName = $this->controller . 'Controller';
+      call_user_func_array(array(new $fullControllerName, $this->method),[$this->parameters]);
+    }
+
+    public function set_default_controller($controller = false) {
+      if ($controller != false && file_exists('controller/' . $controller . 'Controller.php') === true) {
+        $this->default_controller = $controller;
+      }
+      else {
+        die('<h1>We don"t know that controller, please check</h1>');
+      }
+    }
+
+    /**
+     * Gets the name of the controller and returns it
+     * @return [string] [The name of the controller]
+     */
+    private function get_controller() {
+      if (ISSET($this->router_request[0])) {
+        // We have a / after the router
+        if ($this->router_request[0] != '') {
+          // No empty name
+          if (file_exists('controller/' . $this->router_request[0] . 'Controller.php') === true) {
+            // We have also that file!
+            $this->controller = $this->router_request[0];
+          }
+          else {
+            $this->controller = $this->default_controller;
           }
         }
-      }
-    }
-
-    /**
-     * Parse the url to a array
-     */
-    public function parseUrl() {
-        $this->path = str_replace($this->installedPath, '', $this->url);
-        // We remove the installed path from the url
-        // So we get the correct url
-        $this->path = explode('/', $this->path);
-    }
-
-
-    private function translateControllerName() {
-      if (ISSET($this->translateControllerNames[$this->controller])) {
-        // If there is a array in the translate arr with the value we need
-        $this->controller = $this->translateControllerNames[$this->controller];
-      }
-    }
-
-    /**
-     * Parse the router calls the controller, method and send some parameters
-     */
-    public function parseRouter() {
-      require_once 'controller/' . $this->controller . "Controller.php";
-
-      $this->controller = $this->controller . 'Controller';
-      $controller = new $this->controller;
-      $method = $this->method;
-      $parameters = $this->parameters;
-      call_user_func_array(array($controller, $method), [$parameters]);
-    }
-
-    /**
-     * Gets the controller from the path
-     * We first check if there is a ctrl
-     * If there isn't a ctrl set we set the default ctrl
-     */
-    public function getController() {
-      if (!empty($this->path[0])) {
-        // Check if there is a path
-        $controller = $this->path[0];
-        if (file_exists('controller/' . $controller . 'Controller.php')) {
-          // Check if there is a controller
-          $this->controller = $controller;
-        }
         else {
-          // We will set the default controller to be used
-          $this->controller = $this->standardController;
+          $this->controller = $this->default_controller;
         }
       }
-
       else {
-        $this->controller = $this->standardController;
+        $this->controller = $this->default_controller;
       }
+      return($this->controller);
     }
 
     /**
-     * Gets the method
-     * If the method doens't exists we set a default method
+     * Gets the method of the router_request and returns it
+     * @return [string] [The name of the method]
      */
-    public function getMethod() {
-      if (!empty($this->path[1])) {
-        // To check if we have a method comeing in
-        $method = $this->path[1];
-        $controller = $this->controller . 'Controller';
+    private function get_method() {
+      if (ISSET($this->router_request[1])) {
         require_once 'controller/' . $this->controller . 'Controller.php';
-        // For method exists to work we need the controller
-        if (method_exists(new $controller, $method)) {
-          $this->method = $method;
+        if (method_exists(new $this->controller, $this->router_request[1])) {
+          $this->method = $this->router_request[1];
         }
-
         else {
-          $this->method = $this->standardMethod;
+          $this->method = 'index';
         }
       }
-
       else {
-        $this->method = $this->standardMethod;
+        $this->method = 'index';
       }
     }
 
-    /**
-     * gets the parameters from the path
-     * We first check if there is any parameters
-     */
-    public function getParameters() {
-      if (!empty($this->path[0]) && !empty($this->path[1])) {
-        $parameters = $this->path;
-        unset($parameters[0]);
-        unset($parameters[1]);
-        $parameters = array_values($parameters);
-        // To remove the method and the controller
-        $this->parameters = $parameters;
+    private function get_parameters() {
+      if (ISSET($this->router_request[0]) && ISSET($this->router_request[1]) && ISSET($this->router_request[2])) {
+        $temp_request = $this->router_request;
+        unset($temp_request[0]);
+        unset($temp_request[1]);
+        $temp_request = array_values($temp_request);
+
+        for ($i=0; $i < count($temp_request); $i++) {
+          $this->parameters[] = $temp_request[$i];
+        }
       }
       else {
-        $this->parameters = array();
+        // No parameters found
+        $this->parameters = '';
       }
-
     }
 
-    public function routerDebug() {
-      echo '<div style="font-size: 1.6em;padding: 1em;">';
-        echo "<h2 style='padding: 0; margin: 4px;'>Router debug</h2>";
-        echo "Url: " . $this->url;
-        echo "<br>";
-        echo "Path: ";
-        echo "<pre>";
-          var_dump($this->path);
-        echo "</pre>";
-        echo "<br>";
-        echo "Controller: " . $this->controller;
-        echo "<br>";
-        echo "Methode: " . $this->method;
-        echo "<br>";
-        echo "Parameters: ";
-        echo "<pre>";
-        var_dump($this->parameters);
-        echo "</pre>";
-        echo "</br>";
-        echo "Custom URLs";
-        echo "<pre>";
-          var_dump($this->customURLs);
-        echo "</pre>";
-      echo "</div>";
-    }
+  public function set_custom_url($array) {
 
-    /**
-     * gets the url
-     * @return [string] [The url]
-     */
-    public function getUrl() {
-      $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-      return($url);
-    }
   }
+}
 
 
 ?>
