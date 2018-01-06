@@ -1,6 +1,6 @@
 <?php
 
-  class Router2 {
+  class Router {
     private $rootPath;
     private $router_request;
 

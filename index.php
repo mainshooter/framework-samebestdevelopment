@@ -9,13 +9,10 @@ header('X-Frame-Options: DENY');
   require_once 'config.php';
   require_once 'model/Router.class.php';
 
-  $Router = new Router2('http://localhost/framework/');
+  $Router = new Router($GLOBALS['config']['base_url']);
   $Router->set_default_controller('display');
   $Router->proces_router();
 
-  if ($GLOBALS['config']['router-debug'] == true) {
-    // $Router->routerDebug();
-  }
 
 
 ?>
