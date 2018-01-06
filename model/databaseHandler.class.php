@@ -1,128 +1,141 @@
 <?php
-require_once 'config.php';
-  class db {
-    // To use our database
+  require_once 'config.php';
+  require_once 'Security.class.php';
 
-    // To use this class following:
-    // $db = new db();
-    // $sql = "SELECT * FROM product WHERE idproduct=:productid";
-    // $input = array(
-    //   "productid" => 7
-    // );
-    // $db->readData($sql, $input);
-    // This is called prepared statements
+  class DatabaseHandler {
+    private $Security;
 
-    private $conn;
-    private $serverIP;
-    private $port;
-    private $databaseName;
+    private $conn = null;
+
+    private $server_ip;
+    private $server_port = 3066;
+    private $database_name;
     private $username;
     private $password;
-    // Properties for the database
 
-    function __construct() {
-      // Starts when the class is called
-      $this->serverIP = $GLOBALS['config']['db-ip'];
-      $this->port = $GLOBALS['config']['db-port'];
-      $this->databaseName = $GLOBALS['config']['db-name'];
-      $this->username = $GLOBALS['config']['db-user'];
-      $this->password = $GLOBALS['config']['db-password'];
+    /**
+     * Runs when we instance the class
+     * Sets the ip, port, database name and the login credentials
+     */
+    public function __construct() {
+      $this->Security = new Security();
+      $this->set_server_ip($config['db-server_ip']);
+      $this->set_server_port($config['db-server_port']);
+      $this->set_database_name($config['db-database_name']);
+      $this->set_login_credentials($config['db-username'], $config['db-password']);
+    }
 
-      try {
-        $conn = new PDO("mysql:host=$this->serverIP;port=$this->port;dbname=$this->databaseName", $this->username, $this->password);
-        // set the PDO error mode to exception
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    /**
+     * Sets the server ip adress of the database we going to use
+     * @param string $ip The ip of the database server
+     */
+    public function set_server_ip($ip) {
+      $this->server_ip = $this->Security->check_input($ip);
+      return($this->server_ip);
+    }
 
-        $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
-        // To fix limit issue with prepared statement
+    /**
+     * Sets the server port for the database connection
+     * @param int $port The port of the database is listning to
+     */
+    public function set_server_port($port) {
+      $this->server_port = $this->Security->check_input($port);
+      return($this->server_port);
+    }
 
+    /**
+     * Sets the name of the database
+     * @param string $database_name The name of the db
+     */
+    public function set_database_name($database_name) {
+      $this->database_name = $this->Security->check_input($database_name);
+      return($this->database_name);
+    }
+    /**
+     * Sets the username and password for the database connection
+     * @param string $username the username for the database connection
+     * @param string $password the password for the database connection
+     */
+    public function set_login_credentials($username, $password) {
+      $this->username = $this->Security->check_input($username);
+      $this->password = $this->Security->check_input($password);
 
-        $this->conn = $conn;
-        return("Succes");
+      return([$this->username, $this->password]);
+    }
+    /**
+     * Starts the database connection connection
+     */
+    public function start_connection() {
+      if ($this->check_if_database_credentials_are_filled_in() === true) {
+        try {
+          $this->conn = new PDO("mysql:host=$this->serverIP;port=$this->port;dbname=$this->databaseName", $this->username, $this->password);
+          // set the PDO error mode to exception
+          $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+          $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
+          // To fix limit issue with prepared statement
+
+        } catch (Exception $e) {
+          die("<h1>NO database connection!</h1>");
+        }
+
       }
-      catch (Exception $e) {
-        die('<h1>NO DB CONNECTION</h1>');
-        return ("Connection failed: " . $e->getMessage());
+      else {
+        die('<h1>No Database filled in</h1>');
       }
     }
-    function __destruct() {
-      $this->conn = null;
-    }
-    // SQL -> sql string prepared
-    // input = array contains the input for the prepared statements
-    function CreateData($sql, $input) {
-      // Create some data
 
-      // Used prepared statements
-
+    public function execute_query($sql, $input) {
       try {
-        $conn = $this->conn;
-
-        $query = $conn->prepare($sql);
+        $query = $this->conn->prepare($sql);
         $query->execute($input);
-
-        $result = $query->rowCount();
+        $row = $query->rowCount(PDO::FETCH_ASSOC);
         $lastID = $conn->lastInsertId();
         return($lastID);
       } catch (Exception $e) {
-        return ("Couldn't create data: " . $e->getMessage());
+        return ("Couldn't execute query: " . $e->getMessage());
       }
+
     }
 
-    // SQL -> sql string prepared
-    // input = array contains the input for the prepared statements
-    function readData($sql, $input) {
+    public function read_query($sql, $input) {
       try {
-        $conn = $this->conn;
-        $query = $conn->prepare($sql);
-
+        $query = $this->conn->prepare($sql);
         $query->execute($input);
 
         $row = $query->fetchAll(PDO::FETCH_ASSOC);
         return($row);
-      } catch (Exception $e) {
-          return ("Couldn't read data: " . $e->getMessage());
-      }
-    }
-    // SQL -> sql string prepared
-    // input = array contains the input for the prepared statements
-    function UpdateData($sql, $input) {
-      try {
-        $conn = $this->conn;
-        $query = $conn->prepare($sql);
 
+      } catch (Exception $e) {
+        return ("Couldn't read: " . $e->getMessage());
+      }
+
+    }
+
+    public function count_rows($sql, $input) {
+      try {
+        $query = $this->conn->prepare($sql);
         $query->execute($input);
 
-        $row = $query->rowCount(PDO::FETCH_ASSOC);
-        return("Succesfully updated");
+        $count = $query->rowCount();
+        return($count);
       } catch (Exception $e) {
-          return ("Couldn't update data: " . $e->getMessage());
+        return ("Couldn't count the rows: " . $e->getMessage());
+      }
+
+    }
+
+    private function check_if_database_credentials_are_filled_in() {
+      if (!empty($this->server_ip) && !empty($this->server_port) && !empty($this->database_name) && !empty($this->username) && !empty($this->password)) {
+        return(true);
+      }
+      else {
+        return(false);
       }
     }
-    // SQL -> sql string prepared
-    // input = array contains the input for the prepared statements
-    function DeleteData($sql, $input) {
-      try {
-        $conn = $this->conn;
 
-        $query = $conn->prepare($sql);
-        $query->execute($input);
-
-        $result = $query->rowCount();
-        return(1);
-      } catch (Exception $e) {
-        return ("Couldn't delete data: " . $e->getMessage());
-      }
-    }
-    public function countRows($sql, $input) {
-      $conn = $this->conn;
-
-      $query = $conn->prepare($sql);
-      $query->execute($input);
-
-      $count = $query->rowCount();
-      return($count);
-
+    public function __destruct() {
+      $this->conn = null;
     }
   }
 ?>

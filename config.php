@@ -10,11 +10,11 @@
   // You need to change this when it is in a diffrent folder our
   // If it is in the root folder than it must be empty!
 
-  $config['db-ip'] = '';
-  $config['db-port'] = 3306;
-  $config['db-user'] = '';
+  $config['db-server_ip'] = '';
+  $config['db-server_port'] = 3306;
+  $config['db-username'] = '';
   $config['db-password'] = '';
-  $config['db-name'] = '';
+  $config['db-database_name'] = '';
   // DB config
 
 
