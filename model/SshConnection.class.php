@@ -71,7 +71,7 @@
      * @param [int] $serverID [The ID of the server]
      */
     protected function getServerCredentials($serverID) {
-      $Db = new db();
+      $DatabaseHandler = new DatabaseHandler();
       $S = new Security();
 
       $sql = "SELECT * FROM server WHERE idserver=:serverID";
@@ -79,7 +79,7 @@
         "serverID" => $S->checkInput($serverID)
       );
 
-      $result = $Db->readData($sql, $input);
+      $result = $DatabaseHandler->read_query($sql, $input);
       if (!empty($result)) {
         foreach ($result as $key) {
           $this->serverIP = $key['serverIP'];

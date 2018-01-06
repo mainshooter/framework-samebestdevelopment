@@ -1,5 +1,5 @@
 <?php
-require_once 'model/databaseHandler.class.php';
+require_once 'model/DatabaseHandler.class.php';
 require_once 'model/Security.class.php';
 
  class User {
@@ -13,7 +13,7 @@ require_once 'model/Security.class.php';
      $this->loginToken = 'h79vr29hu3pqhf-249pgae';
 
      $this->Security = new Security();
-     $this->DatabaseHandler = new db();
+     $this->DatabaseHandler = new DatabaseHandler();
    }
 
    /**
@@ -26,8 +26,8 @@ require_once 'model/Security.class.php';
      if ($this->checkIfEmailExists($clientMail) === true) {
        // If we the mail exists
 
-       $clientMail = $this->Security->checkInput($clientMail);
-       $clientPassword = $this->Security->checkInput($clientPassword);
+       $clientMail = $this->Security->check_input($clientMail);
+       $clientPassword = $this->Security->check_input($clientPassword);
 
        $orginalHashedPassword = $this->getHashedPasswordFromDatabase($clientMail);
        if ($this->validatePassword($clientPassword, $orginalHashedPassword) === true) {
@@ -56,21 +56,21 @@ require_once 'model/Security.class.php';
     * @return [string]               [The activation key for a client to send it in the mail for a activation]
     */
    public function registerUser($userMail, $userPassword, $role) {
-     $hashedPassword = $this->hashPassword($this->Security->checkInput($userPassword));
+     $hashedPassword = $this->hashPassword($this->Security->check_input($userPassword));
 
      if ($this->checkIfEmailExists($userMail) === false) {
        // Mail adress doens't exists
        $activationKey = $this->generateActivationKey();
        $sql = "INSERT INTO user (`mail` , `password`, `role`, `activationkey`, `activated`) VALUES (:mail, :password, :role, :activationKey, :activated)";
        $input = array(
-         "mail" => $this->Security->checkInput($userMail),
-         "password" => $this->Security->checkInput($hashedPassword),
-         "role" => $this->Security->checkInput($role),
+         "mail" => $this->Security->check_input($userMail),
+         "password" => $this->Security->check_input($hashedPassword),
+         "role" => $this->Security->check_input($role),
          "activationKey" => $activationKey,
          "activated" => 0
        );
 
-       $this->DatabaseHandler->CreateData($sql, $input);
+       $this->DatabaseHandler->execute_query($sql, $input);
        return($activationKey);
      }
 
@@ -87,9 +87,9 @@ require_once 'model/Security.class.php';
    public function checkIfEmailExists($userMailInput) {
      $sql = "SELECT `mail` FROM user WHERE `mail`=:mail";
      $input = array(
-       "mail" => $this->Security->checkInput($userMailInput)
+       "mail" => $this->Security->check_input($userMailInput)
      );
-     $result = $this->DatabaseHandler->countRows($sql, $input);
+     $result = $this->DatabaseHandler->count_rows($sql, $input);
 
      if ($result == 1) {
        return(true);
@@ -258,10 +258,10 @@ require_once 'model/Security.class.php';
    private function getUserInfo($userMail) {
      $sql = "SELECT userID, role FROM user WHERE mail=:clientMail";
      $input = array(
-       "clientMail" => $this->Security->checkInput($userMail)
+       "clientMail" => $this->Security->check_input($userMail)
      );
 
-     $result = $this->DatabaseHandler->readData($sql, $input);
+     $result = $this->DatabaseHandler->read_query($sql, $input);
      return($result);
    }
 
@@ -284,10 +284,10 @@ require_once 'model/Security.class.php';
    private function getHashedPasswordFromDatabase($userMail) {
      $sql = "SELECT password FROM user where `mail`=:mail";
      $input = array(
-       "mail" => $this->Security->checkInput($userMail)
+       "mail" => $this->Security->check_input($userMail)
      );
 
-     $result = $this->DatabaseHandler->readData($sql, $input);
+     $result = $this->DatabaseHandler->read_query($sql, $input);
      foreach ($result as $key) {
        return($key['password']);
      }

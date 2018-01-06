@@ -49,7 +49,7 @@
      * @param [string] $location [The FULL path location of the directory we want to save the file in]
      */
     public function setSaveLocation($location) {
-      $this->saveLocation = $this->Security->checkInput($location);
+      $this->saveLocation = $this->Security->check_input($location);
     }
 
     /**
