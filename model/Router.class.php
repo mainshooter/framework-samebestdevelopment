@@ -93,7 +93,8 @@
     private function get_method() {
       if (ISSET($this->router_request[1])) {
         require_once 'controller/' . $this->controller . 'Controller.php';
-        if (method_exists(new $this->controller, $this->router_request[1])) {
+        $controllerName = $this->controller . 'Controller';
+        if (method_exists(new $controllerName, $this->router_request[1])) {
           $this->method = $this->router_request[1];
         }
         else {
