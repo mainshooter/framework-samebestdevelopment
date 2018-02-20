@@ -12,6 +12,7 @@
         include 'view/sidebar.html';
       include 'view/footer.php';
     }
+
   }
 
 ?>

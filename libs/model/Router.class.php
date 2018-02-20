@@ -1,4 +1,5 @@
 <?php
+  require_once APP_PATH . '/libs/model/Security.class.php';
 
   class Router {
     private $rootPath;
@@ -10,11 +11,15 @@
     private $method;
     private $parameters;
 
+    private $Security;
+
     /**
      * Sets our root path so we can filter the request
      * @param [string] $base_url [the full url of the browser: e.g. http://localhost/]
      */
     public function __construct($base_url) {
+      $this->Security = new Security();
+
       $fullUrl = $_SERVER['REQUEST_URI'];
       $rootPath = $this->get_root_dir($base_url);
 
@@ -39,6 +44,9 @@
       return($this->rootPath);
     }
 
+    /**
+     * Process the router and goes to the controller if every thign goes well
+     */
     public function proces_router() {
       $this->get_controller();
       $this->get_method();
@@ -68,6 +76,7 @@
         // We have a / after the router
         if ($this->router_request[0] != '') {
           // No empty name
+          $this->router_request[0] = lcfirst($this->router_request[0]);
           if (file_exists('controller/' . $this->router_request[0] . 'Controller.php') === true) {
             // We have also that file!
             $this->controller = $this->router_request[0];
@@ -114,7 +123,7 @@
         $temp_request = array_values($temp_request);
 
         for ($i=0; $i < count($temp_request); $i++) {
-          $this->parameters[] = $temp_request[$i];
+          $this->parameters[] = $this->Security->check_input($temp_request[$i]);
         }
       }
       else {
