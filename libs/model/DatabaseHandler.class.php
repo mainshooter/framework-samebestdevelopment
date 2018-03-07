@@ -1,16 +1,38 @@
 <?php
   require_once APP_PATH . '/config.php';
-  require_once 'Security.class.php';
 
   class DatabaseHandler {
-    private $Security;
-
+    /**
+     * Contains the pdo connection
+     * @var obj
+     */
     private $conn = null;
 
+    /**
+     * Contains the ip adress of our database server
+     * @var string
+     */
     private $server_ip;
+
+    /**
+     * Contains the port of the database server
+     * @var int
+     */
     private $server_port = 3066;
+    /**
+     * The name of the database
+     * @var string
+     */
     private $database_name;
+    /**
+     * The username of our database
+     * @var string
+     */
     private $username;
+    /**
+     * The password of our database
+     * @var string
+     */
     private $password;
 
     /**
