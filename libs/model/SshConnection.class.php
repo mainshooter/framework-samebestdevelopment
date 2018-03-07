@@ -1,10 +1,5 @@
 <?php
-  require_once 'model/databaseHandler.class.php';
-  require_once 'model/Security.class.php';
-  require_once 'model/User.class.php';
-
-  class SshConnection {
-
+  abstract class SshConnection {
     protected $serverIP;
     protected $serverPort;
     protected $serverUsername;
@@ -16,25 +11,13 @@
     protected $sshConnectionActive = false;
     // If the connection is active
 
-
-    /**
-     * Checks if the SSH connection will work
-     * @param  [int] $serverID [description]
-     * @return [boolean]           [Returns if the connection is a succes]
-     */
-    public function sshLogin($serverID) {
-      set_time_limit(5);
-      $loginCredentialsResult = $this->getServerCredentials($serverID);
-      if ($loginCredentialsResult) {
-        $this->sshConnect();
-        return(true);
-      }
-
-      else {
-        return(false);
-      }
-
+    protected function __construct(array $sshCredentials) {
+      $this->serverIP = $sshCredentials['ip'];
+      $this->serverPort = $sshCredentials['port'];
+      $this->serverUsername = $sshCredentials['username'];
+      $this->serverPassword = $sshCredentials['password'];
     }
+
 
     /**
      * Starts a ssh connection
@@ -65,37 +48,15 @@
       }
     }
 
-
-    /**
-     * Gets the server credentials and puts them in the class properties
-     * @param [int] $serverID [The ID of the server]
-     */
-    protected function getServerCredentials($serverID) {
-      $DatabaseHandler = new DatabaseHandler();
-      $S = new Security();
-
-      $sql = "SELECT * FROM server WHERE idserver=:serverID";
-      $input = array(
-        "serverID" => $S->checkInput($serverID)
-      );
-
-      $result = $DatabaseHandler->read_query($sql, $input);
-      if (!empty($result)) {
-        foreach ($result as $key) {
-          $this->serverIP = $key['serverIP'];
-          $this->serverPort = $key['serverPort'];
-          $this->serverUsername = $key['serverUsername'];
-          $this->serverPassword = $key['serverPassword'];
-          break;
-        }
-        return(true);
+    protected function executeCommand($command) {
+      if ($this->sshConnectionActive === true) {
+        $sshShell = ssh2_exec($this->sshShell, $command);
+        // Execute the command
+        stream_set_blocking($sshShell, true);
       }
-
       else {
-        // When there isn't a server
         return(false);
       }
-
     }
   }
 
