@@ -2,15 +2,44 @@
   require_once APP_PATH . '/libs/model/Security.class.php';
 
   class Router {
+    /**
+     * The root path of our application
+     * Leter we get from this our controller method and parameters
+     * @var string
+     */
     private $rootPath;
+    /**
+     * Contains the request of our client
+     * @var [type]
+     */
     private $router_request;
 
+    /**
+     * The name of the default / fallback controller
+     * @var string
+     */
     private $default_controller;
 
+    /**
+     * The name of the controller
+     * @var string
+     */
     private $controller;
+    /**
+     * The name of the method in our url
+     * @var string
+     */
     private $method;
+    /**
+     * Contains all the parameters from the url
+     * @var array
+     */
     private $parameters;
 
+    /**
+     * The class Security
+     * @var obj
+     */
     private $Security;
 
     /**
